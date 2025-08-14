@@ -1,0 +1,224 @@
+{
+  "// 文件: templates/c_traps.json": "",
+  "template_name": "C陷阱与缺陷版",
+  "description": "基于《C陷阱与缺陷》书籍的完整规则集，涵盖书中所有经典案例",
+  "version": "1.0",
+  "author": "SaberOnGo",
+  "reference_book": "《C陷阱与缺陷》(C Traps and Pitfalls) - Andrew Koenig",
+  "enabled_rules": [
+    "C001", "C002", "C004", "C005",
+    "L001", "L002", "L005",
+    "S001", "S003"
+  ],
+  "rule_categories": {
+    "词法陷阱": {
+      "description": "第1章 - 词法层面的陷阱",
+      "rules": [
+        {
+          "id": "L001",
+          "name": "赋值与相等判断",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测条件中的赋值操作，区分 = 和 ==",
+          "book_reference": "第1.1节 符号看起来相同",
+          "page": "P3-P8",
+          "examples": {
+            "bad": "if (x = 0) { /* 永远不执行 */ }",
+            "good": "if (x == 0) { /* 正确的比较 */ }"
+          },
+          "real_world_impact": "这是C语言中最常见的错误之一，经常导致逻辑错误"
+        }
+      ]
+    },
+    "语法陷阱": {
+      "description": "第2章 - 语法层面的陷阱",
+      "rules": [
+        {
+          "id": "C001",
+          "name": "数组下标越界",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测数组访问越界",
+          "book_reference": "第2.1节 理解声明",
+          "page": "P23-P27",
+          "examples": {
+            "bad": "int a[10]; a[10] = 5; /* 越界访问 */",
+            "good": "int a[10]; a[9] = 5; /* 正确访问 */"
+          },
+          "common_mistakes": [
+            "混淆数组大小和最大下标",
+            "在循环中使用 <= 而不是 <",
+            "负数下标访问"
+          ]
+        },
+        {
+          "id": "S003",
+          "name": "变量名与类型混淆",
+          "enabled": true,
+          "severity": "建议",
+          "description": "避免令人困惑的变量命名",
+          "book_reference": "第2.2节 运算符优先级",
+          "page": "P28-P32",
+          "examples": {
+            "bad": "int *p, q; /* q不是指针 */",
+            "good": "int *p, *q; /* 都是指针 */"
+          }
+        }
+      ]
+    },
+    "语义陷阱": {
+      "description": "第3章 - 语义层面的陷阱",
+      "rules": [
+        {
+          "id": "C002",
+          "name": "空指针解引用",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测空指针的解引用操作",
+          "book_reference": "第3.1节 指针与数组",
+          "page": "P45-P52",
+          "examples": {
+            "bad": "char *p = NULL; *p = 'a';",
+            "good": "char *p = malloc(1); if(p) *p = 'a';"
+          },
+          "prevention_tips": [
+            "总是检查malloc的返回值",
+            "初始化指针为NULL",
+            "使用前验证指针有效性"
+          ]
+        },
+        {
+          "id": "L005",
+          "name": "整数除法陷阱",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测除零和整数除法截断",
+          "book_reference": "第3.2节 指针与数组参数",
+          "page": "P53-P58",
+          "examples": {
+            "bad": "int result = 5 / 0; /* 除零 */",
+            "good": "if(denominator != 0) result = numerator / denominator;"
+          }
+        }
+      ]
+    },
+    "连接陷阱": {
+      "description": "第4章 - 连接时的陷阱",
+      "rules": [
+        {
+          "id": "L002",
+          "name": "Switch语句穿透",
+          "enabled": true,
+          "severity": "警告",
+          "description": "检测switch语句中缺少break的情况",
+          "book_reference": "第4.1节 外部函数",
+          "page": "P67-P73",
+          "examples": {
+            "bad": "switch(x) { case 1: do_one(); case 2: do_two(); }",
+            "good": "switch(x) { case 1: do_one(); break; case 2: do_two(); break; }"
+          },
+          "fallthrough_detection": "检测有意的穿透并要求明确注释"
+        }
+      ]
+    },
+    "库函数陷阱": {
+      "description": "第5章 - 标准库函数陷阱",
+      "rules": [
+        {
+          "id": "C004",
+          "name": "字符串函数安全性",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测不安全的字符串函数使用",
+          "book_reference": "第5.1节 getchar函数",
+          "page": "P78-P82",
+          "dangerous_functions": {
+            "gets": "never_use",
+            "strcpy": "use_strncpy",
+            "sprintf": "use_snprintf",
+            "scanf": "validate_input"
+          },
+          "examples": {
+            "bad": "gets(buffer); /* 永远不要使用 */",
+            "good": "fgets(buffer, sizeof(buffer), stdin);"
+          }
+        },
+        {
+          "id": "C005",
+          "name": "内存管理陷阱",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测内存管理相关错误",
+          "book_reference": "第5.2节 更新顺序文件",
+          "page": "P83-P88",
+          "common_errors": [
+            "free后继续使用指针",
+            "重复释放同一指针",
+            "释放非malloc分配的内存",
+            "内存泄漏"
+          ]
+        }
+      ]
+    },
+    "预处理器陷阱": {
+      "description": "第6章 - 预处理器陷阱",
+      "rules": [
+        {
+          "id": "S001",
+          "name": "宏定义陷阱",
+          "enabled": true,
+          "severity": "建议",
+          "description": "检测宏定义中的常见错误",
+          "book_reference": "第6.1节 宏不是函数",
+          "page": "P95-P102",
+          "examples": {
+            "bad": "#define SQUARE(x) x*x /* 优先级问题 */",
+            "good": "#define SQUARE(x) ((x)*(x)) /* 正确的括号 */"
+          },
+          "macro_guidelines": [
+            "参数和整个表达式都要加括号",
+            "避免在宏中使用带副作用的表达式",
+            "使用do-while(0)包装多语句宏"
+          ]
+        }
+      ]
+    }
+  },
+  "severity_weights": {
+    "严重": 10,
+    "警告": 5,
+    "建议": 1
+  },
+  "detection_strategies": {
+    "static_analysis": "使用AST分析检测语法和语义问题",
+    "pattern_matching": "使用正则表达式检测代码模式",
+    "data_flow_analysis": "跟踪变量生命周期和使用模式"
+  },
+  "educational_features": {
+    "book_quotes": "每个规则都包含书中相关引用",
+    "real_examples": "提供真实世界中的错误案例",
+    "fix_suggestions": "详细的修复建议和最佳实践",
+    "cross_references": "相关规则之间的交叉引用"
+  },
+  "target_audience": [
+    "C语言学习者",
+    "系统编程开发者",
+    "嵌入式开发工程师",
+    "代码审查人员"
+  ],
+  "recommended_reading_order": [
+    "词法陷阱 -> 语法陷阱 -> 语义陷阱",
+    "先理解基础概念，再学习高级陷阱",
+    "结合书籍阅读和工具检测"
+  ],
+  "integration_suggestions": {
+    "development_workflow": "集成到日常开发流程中",
+    "code_review": "作为代码审查的辅助工具",
+    "learning_path": "按章节顺序学习和实践"
+  },
+  "customization_options": {
+    "severity_adjustment": "可以根据项目需要调整严重程度",
+    "rule_selection": "可以选择特定章节的规则",
+    "educational_mode": "提供详细的学习模式"
+  }
+}

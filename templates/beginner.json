@@ -1,0 +1,178 @@
+{
+  "template_name": "基础规则版",
+  "description": "包含最基础和最重要的代码检查规则，适合C语言基本规则检查",
+  "version": "1.0",
+  "enabled_rules": [
+    "C001",
+    "C002", 
+    "C003",
+    "C004",
+    "C005",
+    "L001",
+    "L002",
+    "L003",
+    "L004",
+    "L005",
+    "S001",
+    "S002",
+    "S003"
+  ],
+  "rule_categories": {
+    "内存安全": {
+      "description": "防止内存相关的严重错误",
+      "rules": [
+        {
+          "id": "C001",
+          "name": "数组越界检查",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测数组下标越界访问",
+          "example_bad": "int arr[10]; arr[10] = 5;",
+          "example_good": "int arr[10]; arr[9] = 5;",
+          "reference": "《C陷阱与缺陷》第2章"
+        },
+        {
+          "id": "C002", 
+          "name": "空指针检查",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测空指针解引用",
+          "example_bad": "int *p = NULL; *p = 5;",
+          "example_good": "int *p = NULL; if(p) *p = 5;",
+          "reference": "《C陷阱与缺陷》第5章"
+        },
+        {
+          "id": "C003",
+          "name": "未初始化变量",
+          "enabled": true,
+          "severity": "警告", 
+          "description": "检测使用前未初始化的变量",
+          "example_bad": "int x; printf(\"%d\", x);",
+          "example_good": "int x = 0; printf(\"%d\", x);",
+          "reference": "《C陷阱与缺陷》第3章"
+        },
+        {
+          "id": "C004",
+          "name": "内存泄漏检查",
+          "enabled": true,
+          "severity": "警告",
+          "description": "检测malloc后未free的情况",
+          "example_bad": "char *p = malloc(100); return;",
+          "example_good": "char *p = malloc(100); free(p); return;",
+          "reference": "C编程最佳实践"
+        },
+        {
+          "id": "C005", 
+          "name": "缓冲区溢出",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测可能的缓冲区溢出",
+          "example_bad": "char buf[10]; strcpy(buf, very_long_string);",
+          "example_good": "char buf[10]; strncpy(buf, str, sizeof(buf)-1);",
+          "reference": "安全编程指南"
+        }
+      ]
+    },
+    "逻辑错误": {
+      "description": "常见的逻辑错误和编程陷阱",
+      "rules": [
+        {
+          "id": "L001",
+          "name": "赋值写成判断", 
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测条件中的赋值操作",
+          "example_bad": "if (x = 5) { ... }",
+          "example_good": "if (x == 5) { ... }",
+          "reference": "《C陷阱与缺陷》第1章"
+        },
+        {
+          "id": "L002",
+          "name": "switch缺少break",
+          "enabled": true,
+          "severity": "警告",
+          "description": "检测switch语句缺少break",
+          "example_bad": "switch(x) { case 1: do_something(); case 2: ... }",
+          "example_good": "switch(x) { case 1: do_something(); break; case 2: ... }",
+          "reference": "《C陷阱与缺陷》第4章"
+        },
+        {
+          "id": "L003",
+          "name": "无限循环检测",
+          "enabled": true,
+          "severity": "建议",
+          "description": "检测可能的无限循环",
+          "example_bad": "while(1) { if(condition) continue; }",
+          "example_good": "while(condition) { ... }",
+          "reference": "C编程规范"
+        },
+        {
+          "id": "L004",
+          "name": "函数返回值检查",
+          "enabled": true,
+          "severity": "建议",
+          "description": "检测未检查的函数返回值",
+          "example_bad": "malloc(100);",
+          "example_good": "ptr = malloc(100); if(!ptr) handle_error();",
+          "reference": "C编程最佳实践"
+        },
+        {
+          "id": "L005",
+          "name": "整数除零检查",
+          "enabled": true,
+          "severity": "严重",
+          "description": "检测除数为零的情况",
+          "example_bad": "result = a / b;",
+          "example_good": "if(b != 0) result = a / b;",
+          "reference": "《C陷阱与缺陷》第6章"
+        }
+      ]
+    },
+    "代码风格": {
+      "description": "提升代码可读性和维护性",
+      "rules": [
+        {
+          "id": "S001",
+          "name": "魔术数字检查",
+          "enabled": true,
+          "severity": "建议",
+          "description": "检测硬编码的数字常量",
+          "example_bad": "if (status == 3) { ... }",
+          "example_good": "#define STATUS_ERROR 3\nif (status == STATUS_ERROR) { ... }",
+          "reference": "代码整洁之道"
+        },
+        {
+          "id": "S002", 
+          "name": "函数长度检查",
+          "enabled": true,
+          "severity": "建议",
+          "description": "检测过长的函数(>50行)",
+          "example_bad": "函数超过50行",
+          "example_good": "将大函数拆分为多个小函数",
+          "reference": "代码整洁之道"
+        },
+        {
+          "id": "S003",
+          "name": "变量命名检查", 
+          "enabled": true,
+          "severity": "建议",
+          "description": "检测不规范的变量名",
+          "example_bad": "int a, b, c;",
+          "example_good": "int width, height, count;",
+          "reference": "C编程规范"
+        }
+      ]
+    }
+  },
+  "severity_weights": {
+    "严重": 10,
+    "警告": 5,
+    "建议": 1
+  },
+  "target_projects": [
+    "C语言学习项目",
+    "简单的控制台程序", 
+    "基础算法实现",
+    "课程作业项目"
+  ]
+}

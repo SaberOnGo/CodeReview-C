@@ -1,0 +1,29 @@
+# CodeReview-C 依赖包列表
+
+# 核心解析库
+tree-sitter==0.20.4
+tree-sitter-c==0.20.6
+
+# GUI框架
+customtkinter==5.2.0
+
+# 文件处理
+chardet==5.2.0
+pathlib2==2.3.7
+
+# 报告生成
+jinja2==3.1.2
+weasyprint==60.1
+markdown==3.5.1
+
+# 数据处理
+dataclasses==0.8; python_version < '3.7'
+
+# 可选依赖 (用于更好的用户体验)
+pillow==10.0.1
+requests==2.31.0
+
+# 开发依赖 (可选)
+pytest==7.4.2
+black==23.9.1
+flake8==6.1.0
